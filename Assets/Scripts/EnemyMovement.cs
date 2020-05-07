@@ -6,19 +6,19 @@ public class EnemyMovement : MonoBehaviour
 {
     public float maxDist = 0f;
     public float minDist = 0f;
-    public float moveSpeed = 3f;
+    public float maxDistY = 0f;
+    public float minDistY = 0f;
 
+    private int direction;
     private Vector2 initialPosition;
     private Rigidbody2D target;
-    private Rigidbody2D player;
-    private Animator animator;
-
-    private float maxDistY = 0f;
-    private float minDistY = 0f;
+    public float moveSpeed = 3f;
     private float jumpHeight = 1.5f;
+    private Animator animator;
     private bool isChase = false;
     private bool isDie = false;
-    private int direction;
+
+    private Rigidbody2D player;
 
     void Start()
     {
@@ -143,7 +143,6 @@ public class EnemyMovement : MonoBehaviour
         {
             float maxY = maxDistY + jumpHeight / 2;
             float minY = initialPosition.y * 2;
-            print(maxY);
             if (target.position.y > maxY)
             {
                 direction = 3;

@@ -158,7 +158,7 @@ MonoBehaviour:
   maxDist: 0
   minDist: 2.5
   maxDistY: 1
-  direction: 0
+  minDistY: 0
   moveSpeed: 3
 --- !u!114 &165609059
 MonoBehaviour:
@@ -422,7 +422,7 @@ MonoBehaviour:
   maxDist: 0
   minDist: 2.5
   maxDistY: 0
-  direction: 0
+  minDistY: 0
   moveSpeed: 2
 --- !u!114 &1560493573
 MonoBehaviour:
