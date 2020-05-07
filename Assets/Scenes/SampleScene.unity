@@ -155,8 +155,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e14f8501613bf5449c0150802500aae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxDist: 0
   minDist: 2.5
   maxDistY: 1
+  direction: 0
   moveSpeed: 3
 --- !u!114 &165609059
 MonoBehaviour:
@@ -417,9 +419,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e14f8501613bf5449c0150802500aae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxDist: 0
   minDist: 2.5
   maxDistY: 0
-  moveSpeed: 3
+  direction: 0
+  moveSpeed: 2
 --- !u!114 &1560493573
 MonoBehaviour:
   m_ObjectHideFlags: 0

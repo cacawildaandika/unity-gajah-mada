@@ -6,18 +6,19 @@ public class EnemyMovement : MonoBehaviour
 {
     public float maxDist = 0f;
     public float minDist = 0f;
-    public float maxDistY = 0f;
-    private float minDistY = 0f;
-    private int direction;
+    public float moveSpeed = 3f;
+
     private Vector2 initialPosition;
     private Rigidbody2D target;
-    public float moveSpeed = 3f;
-    private float jumpHeight = 1.5f;
-    private Animator animator;
-    private float minDistTemp = 0f;
-    private int canMinDistTempChanged = 1;
-
     private Rigidbody2D player;
+    private Animator animator;
+
+    private float maxDistY = 0f;
+    private float minDistY = 0f;
+    private float jumpHeight = 1.5f;
+    private bool isChase = false;
+    private bool isDie = false;
+    private int direction;
 
     void Start()
     {
@@ -38,7 +39,15 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
-        Move();
+        Chase();
+        if (!isChase)
+        {
+            Move();
+        }
+        if (isDie)
+        {
+            Die();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -48,6 +57,7 @@ public class EnemyMovement : MonoBehaviour
             animator.enabled = false;
             Destroy(GetComponent<BoxCollider2D>());
             direction = 2;
+            Die();
         }
     }
 
@@ -55,16 +65,6 @@ public class EnemyMovement : MonoBehaviour
     {
         if(gameObject.tag == Tags.ENEMY)
         {
-            float maxY = initialPosition.y + jumpHeight;
-            float minY = initialPosition.y * 2;
-            if (target.position.y > maxY)
-            {
-                direction = 3;
-            }
-            if (target.position.y < minY)
-            {
-                Destroy(this.gameObject);
-            }
             switch (direction)
             {
                 case -1:
@@ -90,26 +90,9 @@ public class EnemyMovement : MonoBehaviour
                 case 0:
                     direction = (int)Mathf.RoundToInt(Random.Range(-1, 1));
                     break;
-                case 2:
-                    target.velocity = Vector2.zero;
-                    transform.Translate(Vector2.up * jumpHeight * 3 * Time.deltaTime);
-                    break;
-                case 3:
-                    transform.Translate(Vector2.down * Time.deltaTime);
-                    break;
             }
         }else if(gameObject.tag == Tags.ENEMY2)
         {
-            float maxY = maxDistY + jumpHeight / 2;
-            float minY = initialPosition.y * 2;
-            if (target.position.y > maxY)
-            {
-                direction = 3;
-            }
-            if (target.position.y < minY)
-            {
-                Destroy(gameObject);
-            }
             switch (direction)
             {
                 case -1:
@@ -135,12 +118,6 @@ public class EnemyMovement : MonoBehaviour
                 case 0:
                     direction = (int)Mathf.RoundToInt(Random.Range(-1, 1));
                     break;
-                case 2:
-                    target.velocity = new Vector2(target.velocity.x, moveSpeed);
-                    break;
-                case 3:
-                    transform.Translate(Vector2.down * jumpHeight * 3 * Time.deltaTime);
-                    break;
             }
         }
 
@@ -158,28 +135,73 @@ public class EnemyMovement : MonoBehaviour
         target.velocity = new Vector2(-moveSpeed, target.velocity.y);
     }
 
-    //void chase()
-    //{
-    //    if (Vector2.Distance(transform.position, player.position) <= 5)
-    //    {
-    //        transform.position = Vector2.MoveTowards(transform.position, player.position, (moveSpeed - 2.5f) * Time.deltaTime);
-    //        if (canMinDistTempChanged == 1)
-    //        {
-    //            minDistTemp = minDist;
-    //            canMinDistTempChanged = 0;
-    //            minDist -= Vector2.Distance(transform.position, player.position);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        //if(minDistTemp == 0 )
-    //        //{
-    //        //    minDist = minDistTemp;
-    //        //    minDistTemp = 0;
-    //        //    canMinDistTempChanged = 1;
-    //        //}
-    //        canMinDistTempChanged = 1;
-    //    };
-    //}
+    void Die()
+    {
+        isDie = true;
+
+        if (gameObject.tag == Tags.ENEMY2)
+        {
+            float maxY = maxDistY + jumpHeight / 2;
+            float minY = initialPosition.y * 2;
+            print(maxY);
+            if (target.position.y > maxY)
+            {
+                direction = 3;
+            }
+            if (target.position.y < minY)
+            {
+                Destroy(gameObject);
+            }
+            switch (direction)
+            {
+                case 2:
+                    target.velocity = new Vector2(target.velocity.x, moveSpeed);
+                    break;
+                case 3:
+                    transform.Translate(Vector2.down * jumpHeight * 3 * Time.deltaTime);
+                    break;
+            }
+        }
+        else
+        {
+            float maxY = initialPosition.y + jumpHeight;
+            float minY = initialPosition.y * 2;
+            if (target.position.y >= maxY)
+            {
+                direction = 3;
+            }
+            if (target.position.y <= minY)
+            {
+                Destroy(this.gameObject);
+            }
+            switch (direction)
+            {
+                case 2:
+                    target.velocity = Vector2.zero;
+                    transform.Translate(Vector2.up * jumpHeight * 5 * Time.deltaTime);
+                    break;
+                case 3:
+                    transform.Translate(Vector2.down * Time.deltaTime);
+                    break;
+            }
+        }
+        
+    }
+
+    void Chase()
+    {
+        if (!isDie)
+        {
+            if (Vector2.Distance(transform.position, player.position) <= 3)
+            {
+                isChase = true;
+                transform.position = Vector2.MoveTowards(transform.position, player.position, (moveSpeed + 0.5f) * Time.deltaTime);
+            }
+            else
+            {
+                isChase = false;
+            }
+        }
+    }
 
 }
